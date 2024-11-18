@@ -1,0 +1,44 @@
+services:
+  agd:
+    image: lesca/agd:xeon-5.0.0
+    container_name: agd
+    network_mode: host
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      ACCESS_IP: 192.168.2.8 # default is 127.0.0.1
+    volumes:
+      - ./build/entrypoint.sh:/app/entrypoint.sh  # debug only
+
+  postgres:
+    image: postgres:latest
+    container_name: agd_postgres
+    environment:
+      POSTGRES_DB: hk4e
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    # network_mode: "host"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: agd_redis
+    # network_mode: "host"
+    ports:
+      - "6379:6379"
+
+  # (optional) pgAdmin
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: agd_pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - postgres
