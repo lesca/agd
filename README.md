@@ -1,9 +1,6 @@
-# AGD
-
-AGD stands for Anime Game Docker / Daemon.
+# AGD -  Anime Game Daemon in Docker
 
 This repository aims to build the docker image for some anime games.
-
 
 ## Getting Started
 
@@ -33,13 +30,23 @@ docker-compose down
 
 ### Method 1: Xeon's patch
 
-By default, the Xeon's patch forward traffic to the localhost on port `21041` and `21000`. If you are running the container on a Linux box, and game client on Windows, you may need to forward the ports from Windows to the Linux box.
+By default, the Xeon's patch forward traffic to the **localhost** on port `21041` (dispatch) and `21000` (sdkserver). If you are running the container on a Linux box, and game client on Windows, you may need to forward the ports from Windows to the Linux box.
 
 Let's say your Linux box IP is `192.168.2.8`. You can run the following commands in Command Prompt with administrator privileges:
 
 ```cmd
 netsh interface portproxy add v4tov4 listenport=21041 listenaddress=0.0.0.0 connectport=21041 connectaddress=192.168.2.8
 netsh interface portproxy add v4tov4 listenport=21000 listenaddress=0.0.0.0 connectport=21000 connectaddress=192.168.2.8
+netsh interface portproxy show all
+```
+
+If you are running Grasscutter server, or its variant, you may need to forward the two ports to the Grasscutter server's web port. 
+
+Let's say your Grasscutter server's web port is `11080/HTTP`. You can run the following commands in Command Prompt with administrator privileges:
+
+```cmd
+netsh interface portproxy add v4tov4 listenport=21041 listenaddress=0.0.0.0 connectport=11080 connectaddress=192.168.2.8
+netsh interface portproxy add v4tov4 listenport=21000 listenaddress=0.0.0.0 connectport=11080 connectaddress=192.168.2.8
 netsh interface portproxy show all
 ```
 
@@ -52,6 +59,8 @@ netsh interface portproxy reset
 Note: Windows port forwarding only works for TCP, not UDP. You must manually configure the ACCESS_IP in the `docker-compose.yaml` file to your Linux box IP, so your game client can connect to the server.
 
 ### Method 2: MITM Proxy
+
+This method only works for normal RSAPatch.
 
 Please refer to this branch - [proxy](../../tree/proxy).
 
