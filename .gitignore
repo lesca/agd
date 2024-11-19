@@ -1,0 +1,7 @@
+data/
+build/*
+!/build/build.sh
+!/build/Dockerfile*
+!/build/entrypoint*
+*resources*
+*Resources*

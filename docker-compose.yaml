@@ -1,0 +1,47 @@
+services:
+  agd:
+    image: lesca/agd:lunagc-5.0.0
+    container_name: agd
+    ports:
+      - "11080:11080" # 前后必须一致且与ACCESS_PORT一致
+      - "22101:22101/udp"
+    depends_on:
+      - agdb
+    stop_signal: SIGTERM
+    environment:
+      - MONGODB_URI=mongodb://root:root@agdb:27017
+      - ACCESS_IP=192.168.2.8
+      - ACCESS_PORT=11080
+      - ACCOUNT_AUTO_CREATE=true
+      - ACCOUNT_PERMISSIONS="*"
+      - ACCOUNT_DOMAIN="player"
+      - QUEST_MODE=false
+    command: ["-debug"]
+    volumes:
+      - ../res/plugins:/app/plugins
+      # - ../res/5.0-res:/app/resources
+      # - ../res/GC-Resources/Resources:/app/resources
+      - ../res/resources5_0:/app/resources
+      - ./build/entrypoint.sh:/app/entrypoint.sh # debug only
+
+  agdb:
+    container_name: agdb
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    command: ['--logpath', '/dev/null']
+    volumes:
+      - ./data/db:/data/db
+
+  # (optiona) mongodb 管理工具
+  # mongo-express:
+  #   image: mongo-express:latest
+  #   restart: always
+  #   ports:
+  #     - 8082:8081
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: root
+  #     ME_CONFIG_MONGODB_URL: mongodb://root:root@agdb:27017/
+  #     ME_CONFIG_BASICAUTH: false
